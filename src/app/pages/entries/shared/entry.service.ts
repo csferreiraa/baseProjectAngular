@@ -12,14 +12,14 @@ import { Entry } from "./entry.model"
 })
 
 export class EntryService {
-  private apiPath: string = "api/categories"
+  private apiPath: string = "api/entries"
 
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Entry[]> {
     return this.http.get(this.apiPath).pipe(
       catchError(this.handleError),
-      map(this.jsonDataToCategories)
+      map(this.jsonDataToEntries)
     )
   }
 
@@ -28,14 +28,14 @@ export class EntryService {
 
     return this.http.get(url).pipe(
       catchError(this.handleError),
-      map(this.jsonDataToCategory)
+      map(this.jsonDataToEntry)
     )
   }
 
   create(entry: Entry): Observable<Entry> {
     return this.http.post(this.apiPath, entry).pipe(
       catchError(this.handleError),
-      map(this.jsonDataToCategory)
+      map(this.jsonDataToEntry)
     )
   }
 
@@ -58,14 +58,18 @@ export class EntryService {
 
   //Private Methods
 
-  private jsonDataToCategories(jsonData: any[]): Entry[] {
-    const categories: Entry[] = [];
-    jsonData.forEach(element => categories.push(element as Entry));
-    return categories;
+  private jsonDataToEntries(jsonData: any[]): Entry[] {
+    const entries: Entry[] = [];
+    jsonData.forEach(element => {
+      const entry = Object.assign(new Entry(), element);
+      entries.push(entry);
+    });
+
+    return entries;
   }
 
-  private jsonDataToCategory(jsonData: any): Entry {
-    return jsonData as Entry;
+  private jsonDataToEntry(jsonData: any): Entry {
+    return Object.assign(new Entry(), jsonData);
   }
 
   private handleError(error: any): Observable<any> {
